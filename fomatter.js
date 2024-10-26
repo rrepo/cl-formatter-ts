@@ -9,7 +9,8 @@ function formatLispCode(code) {
     while (i < code.length) {
         var char = code[i];
         if (i < code.length - 1 && (char === '\'' || char === '`') && code[i + 1] === '(') {
-            result += '\n' + ' '.repeat(indentLevel * 2) + char + '(';
+            // ここで20文字以上なら、改行して表示する機能を追加する
+            result += char + '(';
             indentLevel++;
             i++;
         }
@@ -33,11 +34,11 @@ function formatLispCode(code) {
             }
             else {
                 if (content.includes('(') || content.includes(')')) {
-                    result += ' '.repeat(indentLevel * 2) + '(';
+                    result += '(';
                     indentLevel++;
                 }
                 else {
-                    result += ' '.repeat(indentLevel * 2) + '(' + content.trim() + ')';
+                    result += '(' + content.trim() + ')';
                     i = innerIndex - 1;
                 }
             }
@@ -57,7 +58,7 @@ function formatLispCode(code) {
         .join('\n');
 }
 // テキストファイルへの出力
-var initcode = "\n(defun factorial(n)\n  (if (= n 0) 1\n    (* n (factorial (- n 1)))))\n(print (factorial 5))\n";
+var initcode = "\n(defparameter \n  *nodes*\n  '((living-room (you are in the living room. a wizard is snoring loudly on the couch.))\n    (garden (you are in a beautiful garden. there is a well front of you.))\n    (attic (are you in the attic. there is a giant welding torch in the corner.))\n   )\n)\n\n(defun describe-location (location nodes) \n  (cadr (assoc location nodes))\n)\n\n(describe-location 'living-room *nodes*)\n\n";
 var formattedCode = formatLispCode(initcode);
 fs.writeFileSync('formatted_lisp_code.txt', formattedCode);
 console.log("フォーマット済みのコードが 'formatted_lisp_code.txt' に出力されました。");
