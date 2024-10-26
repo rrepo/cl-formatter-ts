@@ -6,15 +6,17 @@ function formatLispCode(code) {
     var indentLevel = 0;
     var result = '';
     var i = 0;
+    // 最初に改行と余分なスペースをすべて削除して正規化
+    code = code.replace(/\s+/g, ' ').trim();
     while (i < code.length) {
         var char = code[i];
-        if (i < code.length - 1 && (char === '\'' || char === '`') && code[i + 1] === '(') {
-            // ここで20文字以上なら、改行して表示する機能を追加する
-            result += char + '(';
+        if ((char === '(') && (i === 0 || code[i - 1] !== '\'' && code[i - 1] !== '`')) {
+            // 新しい `(` に移るとき改行を入れる
+            result += "\n".concat(' '.repeat(indentLevel * 2), "(");
             indentLevel++;
-            i++;
         }
         else if (char === '(') {
+            // 内容を括弧の間で収集
             var content = '';
             var innerIndex = i + 1;
             var nestedLevel = 1;
@@ -28,24 +30,16 @@ function formatLispCode(code) {
                 innerIndex++;
             }
             if (content.trim().length < 20) {
-                console.log(content.trim());
-                result += '(' + content.trim() + ')';
-                i = innerIndex - 1;
+                result += "(".concat(content.trim(), ")");
             }
             else {
-                if (content.includes('(') || content.includes(')')) {
-                    result += '(';
-                    indentLevel++;
-                }
-                else {
-                    result += '(' + content.trim() + ')';
-                    i = innerIndex - 1;
-                }
+                result += "(\n".concat(' '.repeat((indentLevel + 1) * 2)).concat(content.trim().replace(/\s+/g, ' '), "\n").concat(' '.repeat(indentLevel * 2), ")");
             }
+            i = innerIndex - 1;
         }
         else if (char === ')') {
             indentLevel = Math.max(0, indentLevel - 1);
-            result += ')';
+            result += "\n".concat(' '.repeat(indentLevel * 2), ")");
         }
         else {
             result += char;
@@ -58,7 +52,7 @@ function formatLispCode(code) {
         .join('\n');
 }
 // テキストファイルへの出力
-var initcode = "\n(defparameter \n  *nodes*\n  '((living-room (you are in the living room. a wizard is snoring loudly on the couch.))\n    (garden (you are in a beautiful garden. there is a well front of you.))\n    (attic (are you in the attic. there is a giant welding torch in the corner.))\n   )\n)\n\n(defun describe-location (location nodes) \n  (cadr (assoc location nodes))\n)\n\n(describe-location 'living-room *nodes*)\n\n";
+var initcode = "\n(defparameter *nodes* ((living-room (you are in the living room. a wizard is snoring loudly on the couch.))(garden (you are in a beautiful garden. there is a well front of you.))\n    (attic (are you in the attic. there is a giant welding torch in the corner.))))(defun describe-location (location nodes) (cadr (assoc location nodes)))(describe-location 'living-room *nodes*)\n";
 var formattedCode = formatLispCode(initcode);
 fs.writeFileSync('formatted_lisp_code.txt', formattedCode);
 console.log("フォーマット済みのコードが 'formatted_lisp_code.txt' に出力されました。");
