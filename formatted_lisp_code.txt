@@ -1,27 +1,13 @@
 
 (defparameter *nodes*
   (
-    (living-room
-      (you are in the living room. a wizard is snoring loudly on the couch.
-      )
-    )
+    ( living-room
+      (you are in the living room. a wizard is snoring loudly on the couch.))
     (garden
-      (you are in a beautiful garden. there is a well front of you.
-      )
-    )
+      (you are in a beautiful garden. there is a well front of you.))
     (attic
-      (are you in the attic. there is a giant welding torch in the corner.
-      )
-    )
-  )
-)
-(defun describe-location
-  (location nodes
-  )
+      (are you in the attic. there is a giant welding torch in the corner.))))
+(defun describe-location (location nodes)
   (cadr
-    (assoc location nodes
-    )
-  )
-)
-(describe-location 'living-room *nodes*
-)
+    (assoc location nodes)))
+(describe-location 'living-room *nodes*)
