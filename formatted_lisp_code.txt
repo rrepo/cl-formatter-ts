@@ -10,4 +10,4 @@
 (defun describe-location (location nodes)
   (cadr
     (assoc location nodes)))
-(describe-location 'living-room *nodes*)
+(describe-location 'living-room *nodes*) (apply #'+ '(1 2 3))

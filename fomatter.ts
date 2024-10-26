@@ -24,6 +24,8 @@ function formatLispCode(code: string): string {
         innerIndex++;
       }
 
+      // インデントレベルが0、新しい(がたされたとき、は改行を入れるようにしたい
+
       console.log(content)
       if (content.trim().length < 20) {
         result += `(`;
@@ -52,6 +54,7 @@ function formatLispCode(code: string): string {
 // テキストファイルへの出力
 const initcode = `
 (defparameter *nodes* (    (       living-room (you are in the living room. a wizard is snoring loudly on the couch.))(garden (you are in a beautiful garden. there is a well front of you.))(attic (are you in the attic. there is a giant welding torch in the corner.))))(defun describe-location (location nodes) (cadr (assoc location nodes)))(describe-location       'living-room *nodes*)
+(apply #'+ '(1 2 3)) 
 `;
 const formattedCode = formatLispCode(initcode);
 
