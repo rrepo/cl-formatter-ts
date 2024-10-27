@@ -25,8 +25,9 @@ function formatLispCode(code: string): string {
       }
 
       // インデントレベルが0、新しい(がたされたとき、は改行を入れるようにしたい
-
+      console.log(indentLevel)
       console.log(content)
+
       if (content.trim().length < 20) {
         result += `(`;
         indentLevel++;
