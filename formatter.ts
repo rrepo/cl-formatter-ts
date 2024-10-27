@@ -7,7 +7,9 @@ function formatLispCode(code: string): string {
   let i = 0;
 
   // 最初に改行と余分なスペースを削除して正規化
-  code = code.replace(/\s+/g, ' ').trim();
+  code = code.replace(/\s+/g, ' ')
+    .replace(/` \(/g, '`(')
+    .trim();
 
   while (i < code.length) {
     const char = code[i];
@@ -39,7 +41,7 @@ function formatLispCode(code: string): string {
       }
     } else if (char === ')') {
       indentLevel = Math.max(0, indentLevel - 1);
-      result +=  `)`;
+      result += `)`;
     } else {
       result += char;
     }
@@ -75,7 +77,7 @@ const initcode = `
 (defparameter 
   *edges*
   \`
-  ((living-room (garden west door) (attic upstairs ladder)) 
+((living-room (garden west door) (attic upstairs ladder))
     (garden (living-room east door))
     (attic (living-room downstairs ladder))
   )

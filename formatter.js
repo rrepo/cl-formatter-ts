@@ -7,7 +7,9 @@ function formatLispCode(code) {
     var result = '';
     var i = 0;
     // 最初に改行と余分なスペースを削除して正規化
-    code = code.replace(/\s+/g, ' ').trim();
+    code = code.replace(/\s+/g, ' ')
+        .replace(/` \(/g, '`(')
+        .trim();
     while (i < code.length) {
         var char = code[i];
         if ((char === '(') && (i === 0 || code[i - 1] !== '\'' && code[i - 1] !== '`')) {
@@ -24,8 +26,9 @@ function formatLispCode(code) {
                 innerIndex++;
             }
             // インデントレベルが0、新しい(がたされたとき、は改行を入れるようにしたい
-            console.log(indentLevel);
-            console.log(content);
+            if (indentLevel == 0) {
+                result += '\n';
+            }
             if (content.trim().length < 20) {
                 result += "(";
                 indentLevel++;
@@ -51,7 +54,7 @@ function formatLispCode(code) {
         .join('\n');
 }
 // テキストファイルへの出力
-var initcode = "\n(defparameter *nodes* (    (       living-room (you are in the living room. a wizard is snoring loudly on the couch.))(garden (you are in a beautiful garden. there is a well front of you.))(attic (are you in the attic. there is a giant welding torch in the corner.))))(defun describe-location (location nodes) (cadr (assoc location nodes)))(describe-location       'living-room *nodes*)\n(apply #'+ '(1 2 3)) \n";
+var initcode = "\n(setq *print-level* nil)\n(setq *print-length* nil)\n\n(defparameter \n  *nodes*\n  '((living-room (you are in the living room. a wizard is snoring loudly on the couch.))\n    (garden (you are in a beautiful garden. there is a well front of you.))\n    (attic (are you in the attic. there is a giant welding torch in the corner.))\n   )\n)\n\n(defun describe-location (location nodes) \n  (cadr (assoc location nodes))\n)\n\n(describe-location 'living-room *nodes*)\n\n(defparameter \n  *edges*\n  `\n((living-room (garden west door) (attic upstairs ladder))\n    (garden (living-room east door))\n    (attic (living-room downstairs ladder))\n  )\n)";
 var formattedCode = formatLispCode(initcode);
 fs.writeFileSync('formatted_lisp_code.txt', formattedCode);
 console.log("フォーマット済みのコードが 'formatted_lisp_code.txt' に出力されました。");
