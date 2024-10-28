@@ -7,9 +7,13 @@ function formatLispCode(code: string): string {
   let i = 0;
 
   // 最初に改行と余分なスペースを削除して正規化
-  code = code.replace(/\s+/g, ' ')
-    .replace(/` \(/g, '`(')
-    .trim();
+  code = code.replace(/(;.*?)(\r?\n)/g, (match, comment, newline) => `__COMMENT__${comment}__${newline}`)
+    // 空白を正規化
+    .replace(/\s+/g, ' ')
+    .replace(/`\s*\(/g, '`(')
+    .trim()
+  // コメントを元に戻す
+  // .replace(/__COMMENT__(.*?);__(\r?\n)/g, '$1$2');
 
   while (i < code.length) {
     const char = code[i];
@@ -45,9 +49,16 @@ function formatLispCode(code: string): string {
     } else {
       result += char;
     }
-
     i++;
   }
+
+  // console.log(result)
+  result = result
+    .replace(/__COMMENT__/g, '')
+    .replace(/__\s*/g, '\n');
+  console.log(result)
+  // return result
+
 
   return result
     .split('\n')
@@ -57,31 +68,13 @@ function formatLispCode(code: string): string {
 
 // テキストファイルへの出力
 const initcode = `
-(setq *print-level* nil)
-(setq *print-length* nil)
-
-(defparameter 
-  *nodes*
-  '((living-room (you are in the living room. a wizard is snoring loudly on the couch.))
-    (garden (you are in a beautiful garden. there is a well front of you.))
-    (attic (are you in the attic. there is a giant welding torch in the corner.))
-   )
-)
-
-(defun describe-location (location nodes) 
-  (cadr (assoc location nodes))
-)
-
-(describe-location 'living-room *nodes*)
-
 (defparameter 
   *edges*
   \`
 ((living-room (garden west door) (attic upstairs ladder))
-    (garden (living-room east door))
-    (attic (living-room downstairs ladder))
-  )
-)`;
+    (garden (living-room east door)) ; test
+    (attic (living-room downstairs ladder)) ;test
+))`;
 const formattedCode = formatLispCode(initcode);
 
 fs.writeFileSync('formatted_lisp_code.txt', formattedCode);
