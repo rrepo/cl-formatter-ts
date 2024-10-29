@@ -2,10 +2,11 @@
 
 (defparameter *edges* `(
   (living-room (garden west door)
-    (attic upstairs ladder))
+    (attic upstairs ladder)) ;trtttere
+
   (garden
     (living-room east door)); test
-  TTT
+
   (attic
     (living-room downstairs ladder)) ;test
-  TTT ))
+   ))

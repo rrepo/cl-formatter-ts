@@ -47,12 +47,15 @@ function formatLispCode(code: string): string {
       result += `)`;
     } else if (char == "T" && code[i + 1] == "T" && code[i + 2] == "T") {
       result += `\n${' '.repeat(indentLevel * 2)}`;
-      result += char;
+      i = i + 2
     } else {
       result += char;
     }
     i++;
   }
+
+  const text = result.replace(/TTT\n/g, "");
+  console.log(text)
 
   return result
     .split('\n')
@@ -65,9 +68,9 @@ const initcode = `
 (defparameter 
   *edges*
   \`
-((living-room (garden west door) (attic upstairs ladder))
-    (garden (living-room east door)); test
-    (attic (living-room downstairs ladder)) ;test
+((living-room (garden west door) (attic upstairs ladder)) ;trtttere
+(garden (living-room east door)); test
+(attic (living-room downstairs ladder)) ;test
 ))`;
 const formattedCode = formatLispCode(initcode);
 
