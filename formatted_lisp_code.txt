@@ -4,7 +4,8 @@
   (living-room (garden west door)
     (attic upstairs ladder))
   (garden
-    (living-room east door)) ; test
-(attic
+    (living-room east door)); test
+  TTT
+  (attic
     (living-room downstairs ladder)) ;test
-))
+  TTT ))

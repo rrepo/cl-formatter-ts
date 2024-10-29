@@ -1,19 +1,17 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var fs = require("fs");
-// Lispコードのフォーマット関数
 function formatLispCode(code) {
     var indentLevel = 0;
     var result = '';
     var i = 0;
     // 最初に改行と余分なスペースを削除して正規化
-    code = code.replace(/(;.*?)(\r?\n)/g, function (match, comment, newline) { return "__COMMENT__".concat(comment, "__").concat(newline); })
-        // 空白を正規化
+    code = code
+        .replace(/(;.*?)(\r?\n)/g, function (match, comment, newline) { return "".concat(comment, "TTT").concat(newline); })
         .replace(/\s+/g, ' ')
         .replace(/`\s*\(/g, '`(')
         .trim();
-    // コメントを元に戻す
-    // .replace(/__COMMENT__(.*?);__(\r?\n)/g, '$1$2');
+    console.log(code);
     while (i < code.length) {
         var char = code[i];
         if ((char === '(') && (i === 0 || code[i - 1] !== '\'' && code[i - 1] !== '`')) {
@@ -47,24 +45,22 @@ function formatLispCode(code) {
             indentLevel = Math.max(0, indentLevel - 1);
             result += ")";
         }
+        else if (char == "T" && code[i + 1] == "T" && code[i + 2] == "T") {
+            result += "\n".concat(' '.repeat(indentLevel * 2));
+            result += char;
+        }
         else {
             result += char;
         }
         i++;
     }
-    // console.log(result)
-    result = result
-        .replace(/__COMMENT__/g, '')
-        .replace(/__\s*/g, '\n');
-    console.log(result);
-    // return result
     return result
         .split('\n')
         .map(function (line) { return line.trimEnd(); })
         .join('\n');
 }
 // テキストファイルへの出力
-var initcode = "\n(defparameter \n  *edges*\n  `\n((living-room (garden west door) (attic upstairs ladder))\n    (garden (living-room east door)) ; test\n    (attic (living-room downstairs ladder)) ;test\n))";
+var initcode = "\n(defparameter \n  *edges*\n  `\n((living-room (garden west door) (attic upstairs ladder))\n    (garden (living-room east door)); test\n    (attic (living-room downstairs ladder)) ;test\n))";
 var formattedCode = formatLispCode(initcode);
 fs.writeFileSync('formatted_lisp_code.txt', formattedCode);
 console.log("フォーマット済みのコードが 'formatted_lisp_code.txt' に出力されました。");
