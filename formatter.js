@@ -37,6 +37,7 @@ function formatLispCode(code) {
             }
             else {
                 // 新しい `(` に移るとき改行を入れる
+                // 手前が(か()内の場合は変えるようにしたいが、検出するやり方がわからない
                 result += "\n".concat(' '.repeat(indentLevel * 2), "(");
                 indentLevel++;
             }
@@ -46,23 +47,23 @@ function formatLispCode(code) {
             result += ")";
         }
         else if (char == "T" && code[i + 1] == "T" && code[i + 2] == "T") {
-            result += "\n".concat(' '.repeat(indentLevel * 2));
-            i = i + 2;
+            i = i + 3;
+            if (code[i + 1] != "(") {
+                result += "\n".concat(' '.repeat(indentLevel * 2));
+            }
         }
         else {
             result += char;
         }
         i++;
     }
-    var text = result.replace(/TTT\n/g, "");
-    console.log(text);
-    return result
-        .split('\n')
-        .map(function (line) { return line.trimEnd(); })
-        .join('\n');
+    return result;
+    // .split('\n')
+    // .map(line => line.trimEnd())
+    // .join('\n');
 }
 // テキストファイルへの出力
-var initcode = "\n(defparameter \n  *edges*\n  `\n((living-room (garden west door) (attic upstairs ladder)) ;trtttere\n(garden (living-room east door)); test\n(attic (living-room downstairs ladder)) ;test\n))";
+var initcode = "\n(defparameter \n  *edges*\n  `\n((living-room (garden west door) (attic upstairs ladder)) ;trtttere\n(garden (living-room east door)\n); test\n(attic (living-room downstairs ;test\nladder))\n))";
 var formattedCode = formatLispCode(initcode);
 fs.writeFileSync('formatted_lisp_code.txt', formattedCode);
 console.log("フォーマット済みのコードが 'formatted_lisp_code.txt' に出力されました。");

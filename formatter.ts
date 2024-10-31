@@ -39,6 +39,7 @@ function formatLispCode(code: string): string {
         indentLevel++;
       } else {
         // 新しい `(` に移るとき改行を入れる
+        // 手前が(か()内の場合は変えるようにしたいが、検出するやり方がわからない
         result += `\n${' '.repeat(indentLevel * 2)}(`;
         indentLevel++;
       }
@@ -46,21 +47,20 @@ function formatLispCode(code: string): string {
       indentLevel = Math.max(0, indentLevel - 1);
       result += `)`;
     } else if (char == "T" && code[i + 1] == "T" && code[i + 2] == "T") {
-      result += `\n${' '.repeat(indentLevel * 2)}`;
-      i = i + 2
+      i = i + 3
+      if (code[i + 1] != "(") {
+        result += `\n${' '.repeat(indentLevel * 2)}`;
+      }
     } else {
       result += char;
     }
     i++;
   }
 
-  const text = result.replace(/TTT\n/g, "");
-  console.log(text)
-
   return result
-    .split('\n')
-    .map(line => line.trimEnd())
-    .join('\n');
+  // .split('\n')
+  // .map(line => line.trimEnd())
+  // .join('\n');
 }
 
 // テキストファイルへの出力
@@ -69,8 +69,10 @@ const initcode = `
   *edges*
   \`
 ((living-room (garden west door) (attic upstairs ladder)) ;trtttere
-(garden (living-room east door)); test
-(attic (living-room downstairs ladder)) ;test
+(garden (living-room east door)
+); test
+(attic (living-room downstairs ;test
+ladder))
 ))`;
 const formattedCode = formatLispCode(initcode);
 
