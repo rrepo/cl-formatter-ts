@@ -10,7 +10,8 @@ function formatLispCode(code: string): string {
     .replace(/(;.*?)(\r?\n)/g, (match, comment, newline) => `${comment}TTT${newline}`)
     .replace(/\s+/g, ' ')
     .replace(/`\s*\(/g, '`(')
-    .trim()
+    .trim();
+
 
   console.log(code)
 
@@ -46,6 +47,8 @@ function formatLispCode(code: string): string {
     } else if (char === ')') {
       indentLevel = Math.max(0, indentLevel - 1);
       result += `)`;
+    } else if (char == ";" && code[i + 1] == ";") {
+      result += `\n${' '.repeat(indentLevel * 2)};`;
     } else if (char == "T" && code[i + 1] == "T" && code[i + 2] == "T") {
       i = i + 3
       if (code[i + 1] != "(") {
@@ -68,7 +71,8 @@ const initcode = `
 (defparameter 
   *edges*
   \`
-((living-room (garden west door) (attic upstairs ladder)) ;trtttere
+((living-room (garden west door) (attic upstairs ;;trtttere
+ ladder))
 (garden (living-room east door)
 ); test
 (attic (living-room downstairs ;test

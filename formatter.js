@@ -46,6 +46,9 @@ function formatLispCode(code) {
             indentLevel = Math.max(0, indentLevel - 1);
             result += ")";
         }
+        else if (char == ";" && code[i + 1] == ";") {
+            result += "\n".concat(' '.repeat(indentLevel * 2), ";");
+        }
         else if (char == "T" && code[i + 1] == "T" && code[i + 2] == "T") {
             i = i + 3;
             if (code[i + 1] != "(") {
@@ -63,7 +66,7 @@ function formatLispCode(code) {
     // .join('\n');
 }
 // テキストファイルへの出力
-var initcode = "\n(defparameter \n  *edges*\n  `\n((living-room (garden west door) (attic upstairs ladder)) ;trtttere\n(garden (living-room east door)\n); test\n(attic (living-room downstairs ;test\nladder))\n))";
+var initcode = "\n(defparameter \n  *edges*\n  `\n((living-room (garden west door) (attic upstairs ;;trtttere\n ladder))\n(garden (living-room east door)\n); test\n(attic (living-room downstairs ;test\nladder))\n))";
 var formattedCode = formatLispCode(initcode);
 fs.writeFileSync('formatted_lisp_code.txt', formattedCode);
 console.log("フォーマット済みのコードが 'formatted_lisp_code.txt' に出力されました。");
