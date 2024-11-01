@@ -74,7 +74,7 @@ const initcode = `
 ((living-room (garden west door) (attic upstairs ;;trtttere
  ladder))
 (garden (living-room east door)
-); test
+);; test
 (attic (living-room downstairs ;test
 ladder))
 ))`;

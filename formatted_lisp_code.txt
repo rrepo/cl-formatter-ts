@@ -6,7 +6,8 @@
       ;;trtttere
       ladder)) 
   (garden 
-    (living-room east door) ); test
+    (living-room east door) )
+  ;; test
   (attic 
     (living-room downstairs ;test
       ladder)) ))

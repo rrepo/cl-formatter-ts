@@ -66,7 +66,7 @@ function formatLispCode(code) {
     // .join('\n');
 }
 // テキストファイルへの出力
-var initcode = "\n(defparameter \n  *edges*\n  `\n((living-room (garden west door) (attic upstairs ;;trtttere\n ladder))\n(garden (living-room east door)\n); test\n(attic (living-room downstairs ;test\nladder))\n))";
+var initcode = "\n(defparameter \n  *edges*\n  `\n((living-room (garden west door) (attic upstairs ;;trtttere\n ladder))\n(garden (living-room east door)\n);; test\n(attic (living-room downstairs ;test\nladder))\n))";
 var formattedCode = formatLispCode(initcode);
 fs.writeFileSync('formatted_lisp_code.txt', formattedCode);
 console.log("フォーマット済みのコードが 'formatted_lisp_code.txt' に出力されました。");
