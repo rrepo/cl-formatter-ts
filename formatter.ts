@@ -54,6 +54,8 @@ function formatLispCode(code: string): string {
       if (code[i + 1] == ";") {
         console.log(code[i + 1])
         result += "\n";
+      } else {
+        console.log("code",code[i - 2])
       }
 
       // `;` が出現した場合
@@ -94,6 +96,16 @@ function formatLispCode(code: string): string {
 
 // テキストファイルへの出力
 const initcode = `
+(princ "test")
+
+; (defparameter *wizard-edges* '( 
+;   (living-room (garden west door) 
+;     (attic upstairs ladder)) 
+;   (garden 
+;     (living-room east door)) 
+;   (attic 
+;     (living-room downstairs ladder)) )) 
+
 (defparameter 
   *edges*
   \`

@@ -54,6 +54,9 @@ function formatLispCode(code) {
                 console.log(code[i + 1]);
                 result += "\n";
             }
+            else {
+                console.log("code", code[i - 2]);
+            }
             // `;` が出現した場合
             result += char; // 現在の `char` を追加
             // 次の文字を調べる
@@ -90,7 +93,7 @@ function formatLispCode(code) {
     // .join('\n');
 }
 // テキストファイルへの出力
-var initcode = "\n(defparameter \n  *edges*\n  `\n((living-room (garden west door) (attic upstairs ;;trtttere\n ladder))\n(garden (living-room east door)\n);; test\n(attic (living-room downstairs ;test\nladder))\n))\n\n; testts\n; (gdgda\n";
+var initcode = "\n(princ \"test\")\n\n; (defparameter *wizard-edges* '( \n;   (living-room (garden west door) \n;     (attic upstairs ladder)) \n;   (garden \n;     (living-room east door)) \n;   (attic \n;     (living-room downstairs ladder)) )) \n\n(defparameter \n  *edges*\n  `\n((living-room (garden west door) (attic upstairs ;;trtttere\n ladder))\n(garden (living-room east door)\n);; test\n(attic (living-room downstairs ;test\nladder))\n))\n\n; testts\n; (gdgda\n";
 var formattedCode = formatLispCode(initcode);
 fs.writeFileSync('formatted_lisp_code.txt', formattedCode);
 console.log("フォーマット済みのコードが 'formatted_lisp_code.txt' に出力されました。");

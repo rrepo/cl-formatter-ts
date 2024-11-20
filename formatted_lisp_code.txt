@@ -1,4 +1,12 @@
 
+(princ "test") ; (defparameter *wizard-edges* '( 
+ ; (living-room (garden west door) 
+ ; (attic upstairs ladder)) 
+ ; (garden 
+ ; (living-room east door)) 
+ ; (attic 
+ ; (living-room downstairs ladder)) )) 
+ 
 
 (defparameter *edges* `(
   (living-room (garden west door) 
