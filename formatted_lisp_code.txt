@@ -1,23 +1,21 @@
 
-(princ "test") ; (defparameter *wizard-edges* '( 
- ; (living-room (garden west door) 
- ; (attic upstairs ladder)) 
- ; (garden 
- ; (living-room east door)) 
- ; (attic 
- ; (living-room downstairs ladder)) )) 
- 
 
-(defparameter *edges* `(
-  (living-room (garden west door) 
-    (attic upstairs 
-;;trtttere
- ladder)) 
-  (garden 
-    (living-room east door) )
-;; test
- 
-  (attic 
-    (living-room downstairs ;test
- ladder)) )) ; testts
- ; (gdgda
+(defun nodes->dot (nodes)
+  (mapc 
+    (lambda (node)(fresh-line)
+      (princ (dot-name (car node)))(princ "[label="") (princ (dot-label node)) (princ ""];"))nodes))
+
+(nodes->dot *wizard-nodes*)
+
+(defun edges->dot (edges)
+  (mapc 
+    (lambda (node)
+      (mapc 
+        (lambda (edge)(fresh-line)
+          (princ (dot-name (car node)))(princ "->")
+          (princ (dot-name (car edge)))(princ "[label="") (princ (dot-label (cdr edge))) (princ ""];"))(cdr node)))
+    edges))
+
+(edges->dot *wizard-edges*)
+
+(defun graph-dot (nodes edges)(princ "digraoh{")(nodes->dot nodes)(edges->dot edges)(princ "}"))

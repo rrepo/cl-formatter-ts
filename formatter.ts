@@ -4,6 +4,7 @@ function formatLispCode(code: string): string {
   let indentLevel = 0;
   let result = '';
   let i = 0;
+  let inString = false; // 文字列リテラル内かどうかを追跡
 
   // 最初に改行と余分なスペースを削除して正規化
   code = code
@@ -12,13 +13,28 @@ function formatLispCode(code: string): string {
     .replace(/`\s*\(/g, '`(')
     .trim();
 
-
-  console.log(code)
+  console.log(code);
 
   while (i < code.length) {
     const char: string = code[i];
 
-    if ((char === '(') && (i === 0 || code[i - 1] !== '\'' && code[i - 1] !== '`')) {
+    // 文字列リテラルの開始と終了を判定
+    if (char === '"' && (i === 0 || code[i - 1] !== '\\')) {
+      inString = !inString; // 文字列リテラルの状態を切り替える
+      result += char;
+      i++;
+      continue;
+    }
+
+    // 文字列リテラル内ではそのまま追加
+    if (inString) {
+      result += char;
+      i++;
+      continue;
+    }
+
+    // 通常のコード処理
+    if (char === '(' && (i === 0 || code[i - 1] !== '\'' && code[i - 1] !== '`')) {
       let content = '';
       let innerIndex = i + 1;
       let nestedLevel = 1;
@@ -30,7 +46,6 @@ function formatLispCode(code: string): string {
         innerIndex++;
       }
 
-      // インデントレベルが0、新しい(がたされたとき、は改行を入れるようにしたい
       if (indentLevel == 0) {
         result += '\n';
       }
@@ -39,47 +54,42 @@ function formatLispCode(code: string): string {
         result += `(`;
         indentLevel++;
       } else {
-        // 新しい `(` に移るとき改行を入れる
-        // 手前が(か()内の場合は変えるようにしたいが、検出するやり方がわからない
         result += `\n${' '.repeat(indentLevel * 2)}(`;
         indentLevel++;
       }
     } else if (char === ')') {
-      indentLevel = Math.max(0, indentLevel - 1);
-      result += `)`;
-      // }
-      // else if (char == ";" && code[i + 1] == ";") {
-      //   result += `\n${' '.repeat(indentLevel * 2)};`;
-    } else if (char == ";") {
-      if (code[i + 1] == ";") {
-        console.log(code[i + 1])
-        result += "\n";
-      } else {
-        console.log("code",code[i - 2])
+      let count = 0;
+      while (i < code.length && code[i] === ')') {
+        count++;
+        i++;
+      }
+      console.log('before', indentLevel);
+      indentLevel -= count;
+      console.log('after', indentLevel);
+      result += ')'.repeat(count);
+    } else if (char === ';') {
+      if (code[i + 1] === ';') {
+        console.log(code[i + 1]);
+        result += '\n';
       }
 
-      // `;` が出現した場合
-      result += char; // 現在の `char` を追加
+      result += char;
 
-      // 次の文字を調べる
       while (i + 1 < code.length) {
         const nextChar = code[i + 1];
 
-        if (nextChar === "T" && code[i + 2] === "T" && code[i + 3] === "T") {
-          // `TTT` を検出した場合
-          i += 3; // `TTT` をスキップ
-          result += "\n"; // 改行を追加
-          break; // ループを抜ける
+        if (nextChar === 'T' && code[i + 2] === 'T' && code[i + 3] === 'T') {
+          i += 3;
+          result += '\n';
+          break;
         } else {
-          // `TTT` に到達するまで文字を追加
           result += nextChar;
-          i++; // ポインタを進める
+          i++;
         }
       }
-    } else if (char == "T" && code[i + 1] == "T" && code[i + 2] == "T") {
-      i = i + 3
-      // result += "\n"
-      if (code[i + 1] != "(") {
+    } else if (char === 'T' && code[i + 1] === 'T' && code[i + 2] === 'T') {
+      i = i + 3;
+      if (code[i + 1] !== '(') {
         result += `\n${' '.repeat(indentLevel * 2)}`;
       }
     } else {
@@ -88,37 +98,26 @@ function formatLispCode(code: string): string {
     i++;
   }
 
-  return result
-  // .split('\n')
-  // .map(line => line.trimEnd())
-  // .join('\n');
+  return result;
 }
 
 // テキストファイルへの出力
 const initcode = `
-(princ "test")
-
-; (defparameter *wizard-edges* '( 
-;   (living-room (garden west door) 
-;     (attic upstairs ladder)) 
-;   (garden 
-;     (living-room east door)) 
-;   (attic 
-;     (living-room downstairs ladder)) )) 
-
-(defparameter 
-  *edges*
-  \`
-((living-room (garden west door) (attic upstairs ;;trtttere
- ladder))
-(garden (living-room east door)
-);; test
-(attic (living-room downstairs ;test
-ladder))
-))
-
-; testts
-; (gdgda
+(defun nodes->dot (nodes) 
+  (mapc 
+    (lambda (node) (fresh-line) 
+      (princ (dot-name (car node))) (princ "[label=\"") (princ (dot-label node)) (princ "\"];")) nodes)) 
+        (nodes->dot *wizard-nodes*) 
+        (defun edges->dot (edges) 
+          (mapc 
+            (lambda (node) 
+              (mapc 
+                (lambda (edge) (fresh-line) 
+                  (princ (dot-name (car node))) (princ "->") 
+                  (princ (dot-name (car edge))) (princ "[label=\"") (princ (dot-label (cdr edge))) (princ "\"];")) (cdr node))) 
+ edges))
+                (edges->dot *wizard-edges*) 
+                (defun graph-dot (nodes edges) (princ "digraoh{") (nodes->dot nodes) (edges->dot edges) (princ "}") )
 `;
 const formattedCode = formatLispCode(initcode);
 
